@@ -1,0 +1,23 @@
+name: Auto-close Issues
+
+on:
+  issues:
+    types:
+      - labeled
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close issues with wontfix or completed label
+        uses: actions/github-script@v6
+        with:
+          script: |
+            if (context.payload.label.name === 'wontfix' || context.payload.label.name === 'completed') {
+              github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                state: 'closed'
+              });
+            }
